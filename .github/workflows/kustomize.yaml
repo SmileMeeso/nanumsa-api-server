@@ -90,5 +90,8 @@ jobs:
 
             - name: Clean up workspace
               run: |
-                  cd ~/actions-runner/_work
+                  image_name="${{ inputs.image-name }}"
+                  modified_name=${image_name/nanumsa-/}
+
+                  cd ~/actions-runner/${modified_name}/_work
                   rm -rf nanumsa-k8s
