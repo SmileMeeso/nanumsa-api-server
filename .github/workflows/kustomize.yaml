@@ -1,0 +1,90 @@
+name: nanumsa CI kustomize
+
+on:
+    workflow_call:
+        inputs:
+            image-name:
+                description: "Name of the image to be updated"
+                required: true
+                default: "nanumsa-api-server"
+                type: string
+            new-version:
+                description: "New Deploy Version"
+                required: true
+                default: "0.0.0"
+                type: string
+
+jobs:
+    deploy:
+        runs-on: self-hosted
+        steps:
+            - name: Setup Kustomize
+              uses: imranismail/setup-kustomize@v1
+
+            - name: Checkout Kustomize repository
+              uses: actions/checkout@v2
+
+            - name: Checkout k8s Project repository
+              uses: actions/checkout@v4
+              with:
+                  repository: SmileMeeso/nanumsa-k8s
+                  path: nanumsa-k8s
+                  token: ${{ secrets.PUSH_K8S_TOKEN }}
+
+            - name: Update image in kustomization
+              run: |
+                  image_name="${{ inputs.image-name }}"
+                  modified_name=${image_name/nanumsa-/}
+                  combined_path="./nanumsa-k8s/${modified_name}"
+                  cd "$combined_path"
+
+                  kustomize edit set image ${{ inputs.image_name }}=smilemeeso/${{ inputs.image_name }}:${{ inputs.new-version }}
+                  kustomize edit set annotation version:${{ inputs.new-version }}
+                  kustomize edit set namespace default
+
+            - name: Kustomize Build
+              run: |
+                  image_name="${{ inputs.image-name }}"
+                  modified_name=${image_name/nanumsa-/}
+                  combined_path="./nanumsa-k8s/${modified_name}"
+                  cd "$combined_path"
+
+                  kustomize build . > kustomized-all.yaml
+
+            - name: Apply Deployment
+              run: |
+                  image_name="${{ inputs.image-name }}"
+                  modified_name=${image_name/nanumsa-/}
+                  combined_path="./nanumsa-k8s/${modified_name}"
+                  cd "$combined_path"
+
+                  yq eval 'select(di == 1)' ./kustomized-all.yaml > kustomized-deployment.yaml
+                  rm kustomized-all.yaml
+
+                  kubectl apply -f ./kustomized-deployment.yaml
+
+            - name: Change Deployment to New Deployment File
+              run: |
+                  image_name="${{ inputs.image-name }}"
+                  modified_name=${image_name/nanumsa-/}
+                  combined_path="./nanumsa-k8s/${modified_name}"
+                  cd "$combined_path"
+
+                  mv kustomized-deployment.yaml deployment.yaml
+
+            - name: Commit changes
+              run: |
+                  image_name="${{ inputs.image-name }}"
+                  combined_path="./nanumsa-k8s"
+                  cd "$combined_path"
+
+                  git config user.name ${{ secrets.USER_NAME }}
+                  git config user.email ${{ secrets.EMAIL }}
+                  git add .
+                  git commit -m "Update Kustomization with new version: ${{ inputs.new-version }}" || echo "No changes to commit."
+                  git push https://smilemeeso:${{ secrets.GITHUB_TOKEN }}@github.com/smilemeeso/nanumsa-k8s.git main
+
+            - name: Clean up workspace
+              run: |
+                  cd ~/actions-runner/_work
+                  rm -rf nanumsa-k8s
