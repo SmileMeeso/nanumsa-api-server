@@ -51,8 +51,13 @@ jobs:
               with:
                   version: "3.13"
 
-            - name: Set Pipx
-              uses: CfirTsabari/actions-pipx@v1
+            - name: Install Pipx
+              run: pip install --user pipx
+
+            - name: Ensure pipx is in PATH
+              run: |
+                  python -m pipx ensurepath
+                  echo "$(python -m site --user-base)/bin" >> $GITHUB_PATH
 
             - name: Set Poetry
               uses: abatilo/actions-poetry@v3
