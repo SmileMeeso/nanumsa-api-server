@@ -52,14 +52,9 @@ jobs:
                   version: "3.13"
 
             - name: Install Pipx
-              run: pip install --user pipx
+              uses: CfirTsabari/actions-pipx@v1
 
-            - name: Ensure pipx is in PATH
-              run: |
-                  python3 -m pipx ensurepath
-                  echo "$(python -m site --user-base)/bin" >> $GITHUB_PATH
-
-            - name: Set Poetry
+            - name: Install Poetry
               uses: abatilo/actions-poetry@v3
               with:
                   poetry-version: "latest"
