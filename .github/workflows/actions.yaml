@@ -51,9 +51,6 @@ jobs:
               with:
                   version: "3.13"
 
-            - name: Install Pipx
-              uses: CfirTsabari/actions-pipx@v1
-
             - name: Install Poetry
               uses: abatilo/actions-poetry@v3
               with:
