@@ -51,6 +51,8 @@ jobs:
 
                   kustomize build . > kustomized-all.yaml
 
+                  cat kustomized-all.yaml
+
             - name: Apply Deployment
               run: |
                   image_name="${{ inputs.image-name }}"
@@ -60,6 +62,8 @@ jobs:
 
                   yq eval 'select(di == 1)' ./kustomized-all.yaml > kustomized-deployment.yaml
                   rm kustomized-all.yaml
+
+                  cat kustomized-deployment.yaml
 
                   kubectl apply -f ./kustomized-deployment.yaml
 

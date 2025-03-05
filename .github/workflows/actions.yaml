@@ -57,10 +57,6 @@ jobs:
                   python -m pipx ensurepath
                   echo "$(python -m site --user-base)/bin" >> $GITHUB_PATH
 
-            - name: Verify Pipx installation
-              run: |
-                  pipx --version
-
             - name: Install Poetry using Pipx
               run: pipx install poetry
 
