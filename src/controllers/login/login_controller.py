@@ -170,9 +170,11 @@ def add_new_social_user(user: SocialUser, db: Session = Depends(database.get_db)
         stmt = select(database.Users).where(database.Users.kakao_user_id == user.kakao_user_id, database.Users.social_type == user.social_type, database.Users.is_deleted == False)
     elif user.social_type == 5:
         stmt = select(database.Users).where(database.Users.naver_client_id == user.naver_client_id, database.Users.social_type == user.social_type, database.Users.is_deleted == False)
-    else:
+    elif user.social_type:
         stmt = select(database.Users).where(database.Users.email == user.email, database.Users.social_type == user.social_type, database.Users.is_deleted == False)
-    
+    else:
+        stmt = select(database.Users).where(database.Users.email == user.email)
+
     matchedRow = db.execute(stmt)
     row = matchedRow.scalars().first()
 
@@ -182,6 +184,8 @@ def add_new_social_user(user: SocialUser, db: Session = Depends(database.get_db)
         userData = database.Users(email=user.email, nickname=nickname, contacts=None, name=None, password=None, edited_at='NOW()', social_type=user.social_type, social_uid=user.social_uid, naver_client_id=user.naver_client_id, kakao_user_id=user.kakao_user_id)
         db.add(userData)    
         db.commit()
+    else:
+        return JSONResponse(content=jsonable_encoder({"error": "중복된 가입자가 있습니다."}))
 
     class SocialLoginUser:
         email = user.email

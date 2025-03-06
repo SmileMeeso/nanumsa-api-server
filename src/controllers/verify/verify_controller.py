@@ -88,6 +88,14 @@ def send_change_password_email(info: ChangePassword, db: Session = Depends(datab
 @router.post("/verify/email/token", tags=['verify'])
 def send_verify_email_and_save_data(email: VerifyEmailToken, db: Session = Depends(database.get_db)):
     email = email.email
+
+    stmt = select(database.Users).where(database.Users.email == email)
+    matchedRow = db.execute(stmt)
+    row = matchedRow.scalars().first()
+
+    if row:
+        return JSONResponse(content=jsonable_encoder({"error": "중복된 이메일이 있습니다."}))
+
     verifyToken = generate_random_string.id_generator(20)
 
     email_account_auth_info = get_secret('candleHelper/Account/VerifyEmailSender')
@@ -116,7 +124,7 @@ def send_verify_email_and_save_data(email: VerifyEmailToken, db: Session = Depen
     db.add(emailVerifyData)
     db.commit()
 
-    return JSONResponse(content=jsonable_encoder({"token": verifyToken}))
+    return JSONResponse(content=jsonable_encoder({"success": "메세지를 성공적으로 발송했습니다."}))
 
 @router.post("/verify/email", tags=['verify'])
 async def make_email_verify_with_token(token:VerifyEmail, db: Session = Depends(database.get_db)):
