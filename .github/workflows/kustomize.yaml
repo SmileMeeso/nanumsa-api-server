@@ -6,7 +6,6 @@ on:
             image-name:
                 description: "Name of the image to be updated"
                 required: true
-                default: "nanumsa-front"
                 type: string
             new-version:
                 description: "New Deploy Version"
