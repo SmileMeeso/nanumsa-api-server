@@ -30,6 +30,12 @@ jobs:
                   path: nanumsa-k8s
                   token: ${{ secrets.PUSH_K8S_TOKEN }}
 
+            - name: Backup patch file
+              run: |
+                  cd ./nanumsa-k8s
+
+                  cp ./kustomization/patch.yaml ./kustomization/patch_backup.yaml
+
             - name: Update patch file with new version
               run: |
                   cd ./nanumsa-k8s
@@ -49,6 +55,13 @@ jobs:
 
                   mv $combined_path/deployment.yaml ./kustomization/deployment.yaml
                   kustomize build ./kustomization > ./kustomization/kustomized-deployment.yaml
+
+            - name: Rollback patch file
+              run: |
+                  cd ./nanumsa-k8s
+
+                  rm ./kustomization/patch.yaml
+                  mv ./kustomization/patch_backup.yaml ./kustomization/patch.yaml
 
             - name: Change Deployment to New Deployment File
               run: |
