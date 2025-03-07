@@ -44,6 +44,8 @@ jobs:
                   sed -i "s/OVERWRITE_CONTAINER_NAME/${{ inputs.image-name }}/g" ./kustomization/patch.yaml
                   sed -i "s/OVERWRITE_IMAGE_NAME_WITH_TAG/smilemeeso\/${{ inputs.image-name }}:${{ inputs.new-version }}/g" ./kustomization/patch.yaml
 
+                  cat ./kustomization/patch.yaml
+
             - name: Kustomize Build
               run: |
                   kustomization_path="kustomization"
