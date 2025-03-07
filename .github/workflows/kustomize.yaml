@@ -6,6 +6,7 @@ on:
             image-name:
                 description: "Name of the image to be updated"
                 required: true
+                default: "nanumsa-front"
                 type: string
             new-version:
                 description: "New Deploy Version"
@@ -35,6 +36,7 @@ jobs:
                   cd ./nanumsa-k8s
 
                   sed -i "s/OVERWRITE_VERSION/${{ inputs.new-version }}/g" ./kustomization/patch.yaml
+                  sed -i "s/OVERWRITE_NAME/${{ inputs.image-name }}/g" ./kustomization/patch.yaml
 
             - name: Kustomize Build
               run: |
