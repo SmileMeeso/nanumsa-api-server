@@ -52,11 +52,11 @@ jobs:
                   modified_name=${image_name/nanumsa-/}
                   combined_path=$modified_name
 
-                  ls -l ./kustomization
 
                   cd ./nanumsa-k8s
 
                   cat ./kustomization/patch.yaml
+                  ls -l ./kustomization
 
                   mv $combined_path/deployment.yaml ./kustomization/deployment.yaml
                   kustomize build ./kustomization > ./kustomization/kustomized-deployment.yaml
