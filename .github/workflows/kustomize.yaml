@@ -56,6 +56,8 @@ jobs:
 
                   cd ./nanumsa-k8s
 
+                  cat ./kustomization/patch.yaml
+
                   mv $combined_path/deployment.yaml ./kustomization/deployment.yaml
                   kustomize build ./kustomization > ./kustomization/kustomized-deployment.yaml
 
