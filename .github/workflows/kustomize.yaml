@@ -46,10 +46,10 @@ jobs:
 
                   cat ./kustomization/patch.yaml
 
+                  ls -l
+
             - name: Kustomize Build
               run: |
-                  kustomization_path="kustomization"
-
                   image_name="${{ inputs.image-name }}"
                   modified_name=${image_name/nanumsa-/}
                   combined_path=$modified_name
@@ -57,6 +57,8 @@ jobs:
                   cd ./nanumsa-k8s
 
                   cat ./kustomization/patch.yaml
+
+                  ls -l
 
                   mv $combined_path/deployment.yaml ./kustomization/deployment.yaml
                   kustomize build ./kustomization > ./kustomization/kustomized-deployment.yaml
