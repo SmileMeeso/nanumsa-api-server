@@ -6,7 +6,7 @@ ARG HOST
 ARG POSTGRESQL_HOST
 ARG POSTGRESQL_PORT
 
-ENV SOCKET_ADDRESS=wss://www.nanumsa.com/socket
+ENV SOCKET_ADDRESS=wss://www.nanumsa.com/
 ENV HOST=https://www.nanumsa.com
 ENV POSTGRESQL_HOST=postgresql-svc
 ENV POSTGRESQL_PORT=5432
@@ -18,7 +18,11 @@ RUN apt-get update && apt-get install -y curl && apt-get clean
 WORKDIR /app
 
 # Poetry 설치
+RUN pip install --upgrade pip
+
 RUN pip install poetry
+RUN pip install psycopg2-binary
+RUN pip install boto3 botocore
 
 # 애플리케이션 코드 복사
 COPY . .
