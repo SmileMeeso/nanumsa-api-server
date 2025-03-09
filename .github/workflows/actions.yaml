@@ -69,7 +69,7 @@ jobs:
             - name: Extract latest version tag
               id: get-latest-tag
               run: |
-                  tags=$(curl -s https://registry.hub.docker.com/v2/repositories/smilemeeso/nanumsa-front/tags | jq -r '.results[].name')
+                  tags=$(curl -s https://registry.hub.docker.com/v2/repositories/smilemeeso/nanumsa-api-server/tags | jq -r '.results[].name')
 
                   all_tags=($(echo "$tags"))
 
