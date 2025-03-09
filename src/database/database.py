@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 connection_info = get_secret('candleHelper/DB/postgres/prod')
 
-engine = create_engine(f'postgresql://{connection_info["username"]}:{connection_info["password"]}@{os.getenv("POSTGRESQL_HOST") or "localhost"}:{os.getenv("POSTGRESQL_PORT") or "5432"}/{connection_info["dbname"]}')
+engine = create_engine(f'postgresql://{connection_info["username"]}:{connection_info["password"]}@{connection_info['host'] or "localhost"}:{connection_info['port'] or "5432"}/{connection_info["dbname"]}')
 session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 
 def get_db():
